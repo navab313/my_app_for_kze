@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=ping_m
+Comment=Monitors and sends ping values to a server.
+Exec=/usr/bin/ping-monitoring-launcher
+Icon=3khordad
+Terminal=true # چون برنامه GUI هست، نیازی به باز کردن ترمینال نیست
+Type=Application
+Categories=Network;Utility;
+StartupNotify=true

@@ -1,0 +1,25 @@
+#!/bin/bash
+# این شی‌بنگ تضمین می‌کنه که launcher با Bash اجرا می‌شه.
+
+APP_INSTALL_DIR="/opt/server-s69"
+VENV_PYTHON="${APP_INSTALL_DIR}/venv/bin/python3"
+MAIN_PYTHON_SCRIPT="${APP_INSTALL_DIR}/server.py" # <<-- این رو با نام واقعی فایل پایتونتون جایگزین کنید!
+
+LOG_FILE="/var/log/server-s69-app.log" # فایل لاگ جدید برای خروجی کامل برنامه
+
+# حذف لاگ قبلی برای شروع تمیز
+rm -f "${LOG_FILE}"
+
+# اجرای اسکریپت پایتون و هدایت stdout و stderr به فایل لاگ
+# این کار باعث میشه تمام خروجی‌ها (از جمله traceback) به فایل نوشته بشن.
+# از 'exec' استفاده نمی‌کنیم تا shell بتونه redirection رو مدیریت کنه.
+# 2>&1  stderr رو به stdout هدایت می‌کنه، بعد > "${LOG_FILE}" همه رو به فایل می‌فرسته.
+# در نهایت 'cat' فایل لاگ رو به stdout میفرسته که systemd بتونه اونو در journalctl هم ضبط کنه.
+# این تضمین می‌کنه که هم در فایل لاگ می‌بینیم و هم در journalctl (اگه systemd بتونه بگیره).
+
+"${VENV_PYTHON}" "${MAIN_PYTHON_SCRIPT}" "$@" > "${LOG_FILE}" 2>&1
+
+# برای اینکه خروجی به journalctl هم برسه، محتوای فایل لاگ رو چاپ می‌کنیم
+/usr/bin/cat "${LOG_FILE}"
+
+exit $? # کد خروجی پایتون رو برمی‌گردونیم

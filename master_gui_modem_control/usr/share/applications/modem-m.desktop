@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=modem-m
+Comment=Advanced GUI Application for System Automation # توضیح کوتاهی درباره برنامه
+Exec=/usr/bin/modem-m_launcher # به اسکریپت لانچر ما در /usr/bin/ اشاره می‌کند
+Icon=/usr/share/icons/hicolor/64x64/apps/modem-m.png
+Terminal=true # چون برنامه GUI است، نیازی به باز شدن ترمینال نیست
+Type=Application
+Categories=Network;Utility; # دسته‌بندی‌هایی که برنامه در منو در آن‌ها ظاهر می‌شود
+StartupNotify=true # برای نمایش نشانگر "در حال اجرا" هنگام شروع برنامه

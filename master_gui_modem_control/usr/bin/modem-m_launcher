@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# مسیر اصلی نصب برنامه پایتون در سیستم نهایی
+APP_INSTALL_DIR="/opt/modem-m"
+
+# مسیر پایتون درون محیط مجازی برنامه
+VENV_PYTHON="${APP_INSTALL_DIR}/venv/bin/python3"
+
+# نام فایل پایتون اصلی برنامه شما (که در APP_INSTALL_DIR قرار می‌گیرد)
+# <<<< این را با نام دقیق فایل پایتون که کد اصلی برنامه‌تان در آن است، جایگزین کنید >>>>
+MAIN_PYTHON_SCRIPT="${APP_INSTALL_DIR}/master_gui.py"
+echo "-----------------------create MAIN_PYTHON_SCRIPT"
+# مسیر پوشه لاگ در دایرکتوری خانه کاربر
+# این به کاربر عادی اجازه می‌دهد لاگ‌ها را بخواند و بنویسد، بدون مشکل دسترسی.
+#LOG_DIR="$HOME/.local/share/modem-m-app/logs"
+#mkdir -p "$LOG_DIR" # اطمینان از وجود پوشه لاگ
+#LOG_FILE="$LOG_DIR/master-gui-app.log"
+
+# بررسی می‌کند که محیط مجازی و مفسر پایتون وجود دارند
+if [ ! -f "${VENV_PYTHON}" ]; then
+    echo "Error: Python virtual environment not found at ${VENV_PYTHON}" >&2
+    exit 1
+fi
+
+# برنامه پایتون را اجرا کرده و خروجی‌ها را به فایل لاگ هدایت می‌کند.
+# 2>&1 stderr را به stdout هدایت می‌کند، سپس > به فایل می‌نویسد.
+# این باعث می‌شود تمام پیام‌های print و خطاها در فایل لاگ ذخیره شوند.
+"${VENV_PYTHON}" "${MAIN_PYTHON_SCRIPT}" "$@"
+echo "---------------------------creat log"
+
+exit $?

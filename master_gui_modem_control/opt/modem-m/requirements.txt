@@ -1,0 +1,7 @@
+selenium
+ttkbootstrap
+requests
+pyperclip
+cryptography
+python-socketio
+pathlib

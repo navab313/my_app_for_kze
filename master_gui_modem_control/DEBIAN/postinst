@@ -1,0 +1,28 @@
+#!/bin/bash
+set -e
+set -x
+
+echo "--------------------------------------------------_-Running post-installation for modem-m..."
+
+# مسیرهای برنامه در سیستم نهایی
+APP_INSTALL_DIR="/opt/modem-m"
+VENV_DIR="${APP_INSTALL_DIR}/venv"
+REQUIREMENTS_FILE="${APP_INSTALL_DIR}/requirements.txt"
+
+# ایجاد محیط مجازی پایتون
+echo "Creating Python virtual environment at ${VENV_DIR}..."
+/usr/bin/rm -rf "${VENV_DIR}"
+/usr/bin/python3 -m venv "${VENV_DIR}"
+
+# نصب کتابخانه‌های پایتون (از requirements.txt) درون محیط مجازی
+echo "Installing Python packages from requirements.txt into virtual environment..."
+export PATH="${VENV_DIR}/bin:$PATH" # اطمینان از استفاده از pip محیط مجازی
+pip install --no-cache-dir -r "${REQUIREMENTS_FILE}"
+
+# تنظیم مجوزهای دسترسی به پوشه برنامه
+echo "Setting permissions for application files in ${APP_INSTALL_DIR}..."
+/usr/bin/chmod -R a+rX "${APP_INSTALL_DIR}"
+
+echo "--------------------------------------_-_-_-_-_Post-installation for modem-m complete."
+
+exit 0

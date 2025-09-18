@@ -1,0 +1,10 @@
+Package: ping-monitoring
+Version: 1.0.0
+Section: utils
+Priority: optional
+Architecture: all
+Depends: python3, python3-pip, python3-venv, python3-kivy
+Maintainer: alii313montazer@gmail.com
+Description: A simple Kivy app to monitor and send ping values.
+ This application provides a graphical interface to continuously ping
+ a target and report latency.

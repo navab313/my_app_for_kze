@@ -1,0 +1,69 @@
+#!/bin/bash
+# Exit immediately if a command exits with a non-zero status.
+set -e
+
+# Enable verbose output for debugging. Remove or comment out for production.
+set -x
+
+echo "running postinst..."
+echo "Current PATH inside postinst: $PATH"
+
+APP_INSTALL_DIR="/opt/server-s69" # Installation directory for the application files.
+VENV_DIR="${APP_INSTALL_DIR}/venv" # Path for the Python virtual environment.
+
+# 1. Create the virtual environment.
+echo "Creating virtual environment at ${VENV_DIR}..."
+# Ensure the virtual environment directory is clean before creation.
+/usr/bin/rm -rf "${VENV_DIR}" || { echo "Failed to clean up old virtual environment directory."; exit 1; }
+# Create the virtual environment using python3-venv.
+/usr/bin/python3 -m venv "${VENV_DIR}" || { echo "Failed to create virtual environment. Ensure 'python3-venv' is installed and sufficient disk space is available."; exit 1; }
+
+# 2. Install Python packages using pip within the virtual environment.
+echo "Installing Python packages from requirements.txt into virtual environment..."
+# Temporarily modify PATH to use pip from within the virtual environment.
+export PATH="${VENV_DIR}/bin:$PATH"
+
+# Install dependencies specified in requirements.txt.
+# --no-cache-dir: Ensures fresh download, avoiding potential cache issues.
+pip install --no-cache-dir -r "${APP_INSTALL_DIR}/requirements.txt" || { echo "Failed to install Python dependencies into venv."; exit 1; }
+
+# Reset PATH to its original state after package installation.
+unset PATH
+echo "PATH after unset PATH: $PATH"
+
+# 3. Ensure Mosquitto service is running.
+echo "Ensuring mosquitto service is running..."
+# Enable and start mosquitto service immediately.
+/usr/bin/systemctl enable mosquitto --now || { echo "Failed to enable/start Mosquitto service. Please ensure 'mosquitto' is installed and systemd is functional."; exit 1; }
+
+# 4. Create and enable the systemd service for the application.
+echo "Creating automatic runner service..."
+SERVICE_FILE="/etc/systemd/system/server-s69.service"
+LAUNCHER_PATH="/usr/local/bin/server-s69-launcher" # Path to the application's launcher script.
+
+# Use a 'Here Document' to write the systemd service file.
+/usr/bin/cat <<EOF > "${SERVICE_FILE}"
+[Unit]
+Description=Server S69 - Android to Desktop Communication App
+After=network.target mosquitto.service
+
+[Service]
+User=root
+WorkingDirectory=${APP_INSTALL_DIR}
+ExecStart=${LAUNCHER_PATH}
+Restart=always
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=graphical.target
+EOF
+
+# Reload systemd daemon to recognize the new service file.
+/usr/bin/systemctl daemon-reload || { echo "Failed to reload systemd daemon."; exit 1; }
+# Enable and start the application service immediately.
+/usr/bin/systemctl enable server-s69.service --now || { echo "Failed to enable/start server-s69 service."; exit 1; }
+
+echo "Post-installation OK :-)"
+
+exit 0 # Indicate successful execution.

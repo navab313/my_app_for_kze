@@ -1,0 +1,28 @@
+#!/bin/bash
+set -e # اگه خطا پیش اومد، اسکریپت متوقف شه.
+set -x # برای اشکال‌زدایی؛ بعدا می‌تونی حذفش کنی.
+
+echo "Running post-installation for my-kivy-app..."
+
+APP_INSTALL_DIR="/opt/my-kivy-app"
+VENV_DIR="${APP_INSTALL_DIR}/venv"
+
+# <<<< این دو خط رو حذف کن >>>>
+# echo "Ensuring python3-venv is installed..."
+# /usr/bin/apt-get update
+# /usr/bin/apt-get install -y python3-venv
+# <<<< پایان حذف >>>>
+
+# ۲. محیط مجازی رو بساز
+echo "Creating virtual environment at ${VENV_DIR}..."
+/usr/bin/rm -rf "${VENV_DIR}" # اگه پوشه venv از قبل هست، پاکش کن
+/usr/bin/python3 -m venv "${VENV_DIR}"
+
+# ۳. پکیج‌های پایتون رو تو محیط مجازی نصب کن
+echo "Installing Python packages from requirements.txt into virtual environment..."
+export PATH="${VENV_DIR}/bin:$PATH" # PATH رو موقتاً تغییر بده تا pip از محیط مجازی استفاده کنه
+pip install --no-cache-dir -r "${APP_INSTALL_DIR}/requirements.txt"
+/usr/bin/chmod -R a+rX "${APP_INSTALL_DIR}" # خواندن و اجرا برای همه کاربران
+echo "Post-installation for my-kivy-app complete."
+
+exit 0

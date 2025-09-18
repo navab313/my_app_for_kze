@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# مسیر نصب اپلیکیشن
+APP_INSTALL_DIR="/opt/my-kivy-app"
+
+# مسیر پایتون تو محیط مجازی
+VENV_PYTHON="${APP_INSTALL_DIR}/venv/bin/python3"
+
+# نام فایل پایتون اصلی شما
+MAIN_PYTHON_SCRIPT="${APP_INSTALL_DIR}/ping_monitoring.py"
+
+# مسیر فایل لاگ برای خروجی‌های برنامه (اگر نیاز به لاگ‌گیری دستی دارید)
+# LOG_FILE="/var/log/my-kivy-app.log" # این خط و استفاده از آن را حذف کردیم تا کاربر عادی دسترسی داشته باشد
+
+# بررسی کن که محیط مجازی و پایتون توش وجود داره
+if [ ! -f "${VENV_PYTHON}" ]; then
+    echo "Error: Python virtual environment not found at ${VENV_PYTHON}" >&2
+    exit 1 # کد خروجی 19 را به 1 تغییر دادم که استانداردتر است
+fi # <<<< این خط رو اضافه کن >>>>
+
+# برنامه پایتون رو اجرا کن
+# خروجی‌ها به صورت پیش‌فرض توسط Kivy در ~/.kivy/logs/ ذخیره می‌شوند.
+"${VENV_PYTHON}" "${MAIN_PYTHON_SCRIPT}" "$@"
+
+exit $?

@@ -1,0 +1,4 @@
+kivy
+httpx
+python-socketio
+python-engineio 
