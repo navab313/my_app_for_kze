@@ -10,14 +10,11 @@
 
 فرستنده اندروید: 
 چینش فایل ها 
-"""
-/android_app
+'''/android_app
 ├── bin
 │   └── myapp-0.1-arm64-v8a_armeabi-v7a-debug.apk
 ├── buildozer.spec
 ├── data
 │   ├── icon.png
 │   └── presplash.png
-└── main.py
-"""
- 
+└── main.py'''
